@@ -1,48 +1,33 @@
-import type { MetaFunction } from "@remix-run/node";
+import ActionBar from "~/components/dashboard/actionBar";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { Await, defer, useLoaderData } from "@remix-run/react";
+import { getBooks } from "~/utils/db";
+import { Suspense } from "react";
+import Table from "~/components/dashboard/table";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
-  ];
-};
+export async function loader({ request }: LoaderFunctionArgs) {
+	const url: URL = new URL(request.url);
+	const search: string = url.searchParams.get("search") || "";
 
-export default function Index() {
-  return (
-    <div className="font-sans p-4">
-      <h1 className="text-3xl">Welcome to Remix</h1>
-      <ul className="list-disc mt-4 pl-6 space-y-2">
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/start/quickstart"
-            rel="noreferrer"
-          >
-            5m Quick Start
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/start/tutorial"
-            rel="noreferrer"
-          >
-            30m Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            className="text-blue-700 underline visited:text-purple-900"
-            target="_blank"
-            href="https://remix.run/docs"
-            rel="noreferrer"
-          >
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
-  );
+	const books: Promise<book[]> = getBooks(search);
+
+	return defer({
+		books: books,
+	});
+}
+
+export default function Home(): JSX.Element {
+	const { books } = useLoaderData<typeof loader>();
+
+	console.log(books);
+
+	return (
+		<section className="layout gap-6 w-full rounded-2xl bg-white">
+			<h1 className="headline">Daftar Buku</h1>
+			<ActionBar />
+			<Suspense>
+				<Await resolve={books}>{(books) => <Table books={books} />}</Await>
+			</Suspense>
+		</section>
+	);
 }
