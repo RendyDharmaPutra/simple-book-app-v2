@@ -1,6 +1,7 @@
 // import deleteBookAction from "@/utils/actions/deleteBook";
 import { Dispatch, SetStateAction } from "react";
 import FormDeleteButton from "./delete_button";
+import { Form } from "@remix-run/react";
 
 export default function Modal({
 	idBook,
@@ -14,14 +15,6 @@ export default function Modal({
 	setShow: Dispatch<SetStateAction<boolean>>;
 }): JSX.Element | null {
 	if (!isOpen) return null;
-
-	// const onAction = async (formData: FormData) => {
-	// 	const idBook: number = Number(formData.get("idBook"));
-	// 	console.log(idBook);
-
-	// 	await deleteBookAction(idBook);
-	// 	setShow(false);
-	// };
 
 	return (
 		<div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
@@ -37,13 +30,13 @@ export default function Modal({
 					>
 						Batal
 					</button>
-					<form
-						// action={onAction}
+					<Form
+						method="delete"
 						className={`py-2 px-4 hover:bg-danger  text-danger hover:text-white rounded duration-200`}
 					>
 						<input id="idBook" name={"idBook"} value={idBook} type="hidden" />
 						<FormDeleteButton />
-					</form>
+					</Form>
 				</div>
 			</section>
 		</div>

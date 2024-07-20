@@ -1,11 +1,20 @@
 import ActionBar from "~/components/dashboard/actionBar";
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { Await, defer, useLoaderData } from "@remix-run/react";
-import { getBooks } from "~/utils/db";
+import {
+	ActionFunctionArgs,
+	LoaderFunctionArgs,
+	TypedDeferredData,
+	TypedResponse,
+} from "@remix-run/node";
+import { Await, defer, redirect, useLoaderData } from "@remix-run/react";
+import { deleteBook, getBooks } from "~/utils/db";
 import { Suspense } from "react";
 import Table from "~/components/dashboard/table";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs): Promise<
+	TypedDeferredData<{
+		books: Promise<book[]>;
+	}>
+> {
 	const url: URL = new URL(request.url);
 	const search: string = url.searchParams.get("search") || "";
 
@@ -19,8 +28,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Home(): JSX.Element {
 	const { books } = useLoaderData<typeof loader>();
 
-	console.log(books);
-
 	return (
 		<section className="layout gap-6 w-full rounded-2xl bg-white">
 			<h1 className="headline">Daftar Buku</h1>
@@ -30,4 +37,15 @@ export default function Home(): JSX.Element {
 			</Suspense>
 		</section>
 	);
+}
+
+export async function action({
+	request,
+}: ActionFunctionArgs): Promise<TypedResponse<never> | undefined> {
+	const body: FormData = await request.formData();
+	const idBook: number = Number(body.get("idBook"));
+
+	const result: bookResult = await deleteBook(idBook);
+
+	if (result) return redirect("/");
 }

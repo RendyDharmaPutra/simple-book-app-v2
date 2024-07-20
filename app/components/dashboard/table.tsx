@@ -64,7 +64,11 @@ function TBody({
 			<TCol content={publisher} />
 			<TCol content={year} />
 			<td className="tcol">
-				<Link to={`/${idBook}`} className="mr-2 tbutton text-primary">
+				<Link
+					prefetch="viewport"
+					to={`/${idBook}`}
+					className="mr-2 tbutton text-primary"
+				>
 					Ubah
 				</Link>
 				<ModalButton id={idBook} title={title} />

@@ -21,7 +21,7 @@ export default function ModalButton({
 			>
 				Hapus
 			</button>
-			{/* <Modal idBook={id} title={title} isOpen={show} setShow={setShow} /> */}
+			<Modal idBook={id} title={title} isOpen={show} setShow={setShow} />
 		</>
 	);
 }
